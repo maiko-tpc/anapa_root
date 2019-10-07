@@ -1,0 +1,14 @@
+*.hb
+*.root
+rootfile
+data
+kumac
+macro
+gain
+calib
+vdrift
+*~
+*.o
+anapa
+*.C
+saka
