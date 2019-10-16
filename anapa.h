@@ -89,6 +89,7 @@ struct enparm {
 
 
 struct evtdata{
+  time_t start_time; /* starting time of DAQ */
   int nev;     /* Number of event */
   int nevoffset; /* EVT number of the first event */
   int iev;      /* EVT number of the current event */

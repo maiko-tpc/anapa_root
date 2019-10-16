@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+#include <sys/ioctl.h>
 #include <fcntl.h>
 
 /* babirl */
@@ -136,6 +137,8 @@ int main(int argc, char *argv[]){
     /* EN parameters */
   };
 
+  time_t *time;
+  int first_verbose = 1;
 
   int lreq=1024,istat;
 
@@ -341,7 +344,12 @@ int main(int argc, char *argv[]){
 
       switch(rhdl[1].classid){
       case RIDF_COMMENT:
-	printf(" Date: %s",ctime((time_t *)&buf[rp]));
+//	evt.start_time = (time_t)buf[rp];
+	time = (time_t *)&buf[rp];
+	printf(" Date: %s", ctime(time));
+//	printf(" Date: %s",ctime((time_t *)&buf[rp]));
+	evt.start_time = *time;
+//	printf("%d\n", evt.start_time);
 	rp+=2;
 	printf(" Comment ID = %d\n ",ri(buf,&rp));
 	while(rp<sz[1]){
@@ -463,9 +471,33 @@ int main(int argc, char *argv[]){
 	    //	  }
 	}
 	
-	if(evt.nev%1000 == 0){
-	  printf("Analyzed event: %d \n",evt.nev);
+//	if(evt.nev%1000 == 0){
+//	  printf("Analyzed event: %d \n",evt.nev);
+//	}
+        /* changed by DOI (2019/10/12) below */
+	if(evt.nev%100 == 0){
+	  if(!first_verbose){
+	    printf("\r\033[%dA", N_SCA/2+2);
+	  }
+	  first_verbose = 0;
+	  int words;
+	  printf("0 ");
+	  for(words=0;words!=2*((evt.nev%1000)/100);++words){
+	    printf("=");
+	  }
+	  printf(">");
+	  ++words;
+	  for(;words!=20;++words){
+	    printf(".");
+	  }
+	  printf(" 1000\n");
+	  printf("SCALAR:\n");
+	  for(j=0;j<N_SCA/2;j++){
+	    printf("SCA %2x:%10d       SCA %2x:%10d\n",j,evtg->isca[j],
+		   j+N_SCA/2,evtg->isca[j+N_SCA/2]);
+	  }
 	}
+	/* changed by DOI (2019/10/12) above
 
 	/*** Sample event selection *************************/
 	if(evt.nev%2 == 1){
@@ -478,7 +510,11 @@ int main(int argc, char *argv[]){
 	  printf("  Block: %d th  Event: %d th\n"
 		 "  (Analyzed Block: %d  Event: %d)\n",
 		 evt.iblk,evt.iev,evt.nblk,evtg->nev);
+	  printf("\n\n");
 	  evt.iflana&=0xfffffffe;
+	  if(!first_verbose){                      // changed by DOI (2019/10/12)
+	    printf("\r\033[%dA\033[K", N_SCA/2+7); // changed by DOI (2019/10/12)
+	  }                                        // changed by DOI (2019/10/12)
 	  setnextev(&evt);
 	}
 	break;
@@ -532,11 +568,11 @@ void file_end(int i){
 //**     HREND("TEST");
 //**   }
 
-  printf("SCALAR:\n");
-  for(j=0;j<N_SCA/2;j++){
-    printf("SCA %2x:%10d       SCA %2x:%10d\n",j,evtg->isca[j],
-	   j+N_SCA/2,evtg->isca[j+N_SCA/2]);
-  }
+//  printf("\nSCALAR:\n");
+//  for(j=0;j<N_SCA/2;j++){
+//    printf("SCA %2x:%10d       SCA %2x:%10d\n",j,evtg->isca[j],
+//	   j+N_SCA/2,evtg->isca[j+N_SCA/2]);
+//  }
 
   /*
     printf("V830 SCALAR:\n");
@@ -547,6 +583,7 @@ void file_end(int i){
   MyAna::GetInstance().AutoSave();
   MyAna::GetInstance().CloseFile();
 
+  printf("\033[%dB\r", N_SCA/2+6); // chaned by DOI (2019/10/12)
   printf("Read Block: %d   Analyzed Block: %d  Analyzed Event: %d\n",
 	 evtg->iblk-evtg->nblkoffset+1,evtg->nblk,evtg->nev);
   exit(0);

@@ -1,4 +1,4 @@
-ALL : clean anapa
+ALL : anapa
 include ./babirl/common.mk
 OBJS = anapa.h kinema.h kinelib.o anapa.o startup.o decode.o cfortran.h para.h tpclib.h bdc.h\
 	hbook.h histdef.o tpclib.o bdc.o nrutil.o myfunc.o nrutil.h myfunc.h analysis.o myana.hpp myana.o Dict.o Dict.h
@@ -20,7 +20,7 @@ anapa : $(OBJS)
 	cd ./babirl/lib; make
 	$(CC) -o anapa *.o $(LOADLIBES)  $(CERNLIB)
 
-	rm -f *.o last.kumac last.kumacold paw.metafile hist.dat
+	rm -f last.kumac last.kumacold paw.metafile hist.dat
 .c.o:
 	$(CC) -c $< $(CFLAGS)
 .cpp.o:
