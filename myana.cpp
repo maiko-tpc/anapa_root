@@ -23,16 +23,19 @@ void MyAna::Analysis(struct evtdata *evt)
 {
   InitLocal();
 // Find edges of tracks
-  std::vector<std::vector<double> > m_edge;
-  std::vector<double> x;
+//**  double m_edge[N_AC][N_STRP];
+  std::vector<std::vector<double> > m_edge; //**
+  std::vector<double> x;                    //**
   int track_state = 0;
   for(int i=0;i!=N_AC;++i){
     std::vector<std::vector<int> > l_edge_ac;
     std::vector<std::vector<int> > t_edge_ac;
-    std::vector<double> m_edge_ac;
+    std::vector<double> m_edge_ac; //**
     for(int j=0;j!=N_STRP;++j){
       std::vector<int> l_edge_strp;
       std::vector<int> t_edge_strp;
+      double m_edge_strp = 0;
+      int m_edge_strp_cnt = 0;
       if(evt->imtpc[i][0][j]==1){
 	l_edge_strp.push_back(0);
       }
@@ -64,6 +67,10 @@ void MyAna::Analysis(struct evtdata *evt)
 	    break;
 	  }
 	}
+	if(evt->imtpc[i][k][j]==1){
+	  m_edge_strp += k;
+	  m_edge_strp_cnt++;
+	}
       }
       if(evt->imtpc[i][1023][j]==1){
 	t_edge_strp.push_back(1023);
@@ -73,24 +80,34 @@ void MyAna::Analysis(struct evtdata *evt)
 
 //      l_edge[i][j] = l_edge_strp;
 //      t_edge[i][j] = t_edge_strp;
-
-      if((l_edge_ac.end()-1)->size() && (t_edge_ac.end()-1)->size()){
-	m_edge_ac.push_back(((t_edge_ac.end()-1)->at(0)+(l_edge_ac.end()-1)->at(0))*0.5);
+////      if((l_edge_ac.end()-1)->size() && (t_edge_ac.end()-1)->size()){                     //**
+////	m_edge_ac.push_back(((t_edge_ac.end()-1)->at(0)+(l_edge_ac.end()-1)->at(0))*0.5); //**
+////	x.push_back(j);									  //**
+////      }                                                                                   //** 
+      if(m_edge_strp>0){
+	m_edge_ac.push_back(m_edge_strp/m_edge_strp_cnt);
 	x.push_back(j);
       }
+//**      m_edge[i][j] = m_edge_strp/m_edge_strp;
     }
     l_edge.push_back(l_edge_ac);
     t_edge.push_back(t_edge_ac);
-    m_edge.push_back(m_edge_ac);
+    m_edge.push_back(m_edge_ac); //**
 //    edge_pos[0][ac] = l_edge_ac.data();
 //    edge_pos[1][ac] = t_edge_ac.data();
 //    edge_num
   }
 
 // Calc drift speed
-  TGraph gr(x.size(), x.data(), m_edge[0].data());
+//**  double x[N_STRP];
+//**  for(int strp=0;strp!=N_STRP;++strp){
+//**    x[strp] = strp;
+//**  }
+
+//**  TGraph gr(N_STRP, x, m_edge[0]);
+  TGraph gr(x.size(), x.data(), m_edge[0].data()); //**
   TF1 f = TF1("f", "[0]*x+[1]", 0, 256);
-  f.SetParameter(0, -1);  // Set initial values of fitting function
+  f.SetParameter(0, 0);  // Set initial values of fitting function
   f.SetParameter(1, 300);
   gr.Fit("f", "RNQ");
   p[0] = f.GetParameter(0); // Get fitting values
