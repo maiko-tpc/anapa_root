@@ -102,40 +102,40 @@ int main(int argc, char *argv[]){
   unsigned int rp;     /* Read pointer */
   unsigned int sz[3];  /* Size for Layer 0, 1, 2 */
   struct evtdata evt;  /* Event data */
-  struct enparm parm={
-    /* ppac_ch_t[3][5] */
-    /* [0][] ... F2U, [1][] ... F2D, [2][]...F3  */
-    /* [0...4]  LRUDA */
-    {{0.1, 0.1, 0.1, 0.1, 0.1},
-     {0.1, 0.1, 0.1, 0.1, 0.1},
-     {0.1, 0.1, 0.1, 0.1, 0.1}},
-
-    /* ppac_t_mm[3][5] */
-    /* [0][] ... F2U, [1][] ... F2D, [2][]...F3  */
-    /* [0...3] X slope, Y slope, X offset, Y offset LDRUAb */
-    {{0.63419, 0.62479, -7.262, -4.923},
-     {0.62691,0.62147, -2.8068, 0.63758},
-     {0.62691,0.62147, -2.8068, 0.63758}},
-
-    /* ppac_geo[3][2] */
-    /* [0][] ... F2U, [1][] ... F2D, [2][]...F3  */
-    /* [][0] ... X, [][1] ... Y  */
-    {{0., 0}, {0., 0}, {0., 0}},
-
-    /* Z position */
-    {0, 482, 88, 630, 755, 1360, 1536.6, 1639, 2261.45}
-
-    /* [0] .. F2PPACU */
-    /* [1] .. F2PPACD */
-    /* [2] .. F2PL    */
-    /* [3] .. F2GV    */
-    /* [4] .. F2Viewer */
-    /* [5] .. TPC Chamber */
-    /* [6] .. TPC Center */
-    /* [7] .. Si */
-    /* [8] .. F3PPAC */
-    /* EN parameters */
-  };
+//**  struct enparm parm={
+//**    /* ppac_ch_t[3][5] */
+//**    /* [0][] ... F2U, [1][] ... F2D, [2][]...F3  */
+//**    /* [0...4]  LRUDA */
+//**    {{0.1, 0.1, 0.1, 0.1, 0.1},
+//**     {0.1, 0.1, 0.1, 0.1, 0.1},
+//**     {0.1, 0.1, 0.1, 0.1, 0.1}},
+//**
+//**    /* ppac_t_mm[3][5] */
+//**    /* [0][] ... F2U, [1][] ... F2D, [2][]...F3  */
+//**    /* [0...3] X slope, Y slope, X offset, Y offset LDRUAb */
+//**    {{0.63419, 0.62479, -7.262, -4.923},
+//**     {0.62691,0.62147, -2.8068, 0.63758},
+//**     {0.62691,0.62147, -2.8068, 0.63758}},
+//**
+//**    /* ppac_geo[3][2] */
+//**    /* [0][] ... F2U, [1][] ... F2D, [2][]...F3  */
+//**    /* [][0] ... X, [][1] ... Y  */
+//**    {{0., 0}, {0., 0}, {0., 0}},
+//**
+//**    /* Z position */
+//**    {0, 482, 88, 630, 755, 1360, 1536.6, 1639, 2261.45}
+//**
+//**    /* [0] .. F2PPACU */
+//**    /* [1] .. F2PPACD */
+//**    /* [2] .. F2PL    */
+//**    /* [3] .. F2GV    */
+//**    /* [4] .. F2Viewer */
+//**    /* [5] .. TPC Chamber */
+//**    /* [6] .. TPC Center */
+//**    /* [7] .. Si */
+//**    /* [8] .. F3PPAC */
+//**    /* EN parameters */
+//**  };
 
   time_t *time;
   int first_verbose = 1;
@@ -150,39 +150,39 @@ int main(int argc, char *argv[]){
   evt.iflana=0;
   evtg=&evt;
 
-  /* add on 16/09/14 for baseline subtraction */
-  //Anode
-  evt.baseline_fadc[0][0] = 32;
-  evt.baseline_fadc[0][1] = 32;
-  evt.baseline_fadc[0][2] = 31;
-  evt.baseline_fadc[0][3] = 30;
-  evt.baseline_fadc[0][4] = 30;
-  evt.baseline_fadc[0][5] = 26;
-  evt.baseline_fadc[0][6] = 29;
-  evt.baseline_fadc[0][7] = 27;
-  //Cathode
-  evt.baseline_fadc[1][0] = 180;
-  evt.baseline_fadc[1][1] = 177;
-  evt.baseline_fadc[1][2] = 181;
-  evt.baseline_fadc[1][3] = 178;
-  evt.baseline_fadc[1][4] = 167;
-  evt.baseline_fadc[1][5] = 174;
-  evt.baseline_fadc[1][6] = 171;
-  evt.baseline_fadc[1][7] = 169;
-
-  evt.fadc_th[0]=15.0;
-  evt.fadc_th[1]=15.0;
-  evt.fadc_th[2]=15.0;
-  evt.fadc_th[3]=15.0;
-  evt.fadc_th[4]=15.0;
-  evt.fadc_th[5]=15.0;
-  evt.fadc_th[6]=15.0;
-  evt.fadc_th[7]=15.0;
-
-  parm.ppac_geo[0][0]=-1.7438+3.93-1.64;
-  parm.ppac_geo[0][1]=0.5954;
-  parm.ppac_geo[1][0]=-1.3177+4.635-3.68;
-  parm.ppac_geo[1][1]=-0.38158;
+//**  /* add on 16/09/14 for baseline subtraction */
+//**  //Anode
+//**  evt.baseline_fadc[0][0] = 32;
+//**  evt.baseline_fadc[0][1] = 32;
+//**  evt.baseline_fadc[0][2] = 31;
+//**  evt.baseline_fadc[0][3] = 30;
+//**  evt.baseline_fadc[0][4] = 30;
+//**  evt.baseline_fadc[0][5] = 26;
+//**  evt.baseline_fadc[0][6] = 29;
+//**  evt.baseline_fadc[0][7] = 27;
+//**  //Cathode
+//**  evt.baseline_fadc[1][0] = 180;
+//**  evt.baseline_fadc[1][1] = 177;
+//**  evt.baseline_fadc[1][2] = 181;
+//**  evt.baseline_fadc[1][3] = 178;
+//**  evt.baseline_fadc[1][4] = 167;
+//**  evt.baseline_fadc[1][5] = 174;
+//**  evt.baseline_fadc[1][6] = 171;
+//**  evt.baseline_fadc[1][7] = 169;
+//**
+//**  evt.fadc_th[0]=15.0;
+//**  evt.fadc_th[1]=15.0;
+//**  evt.fadc_th[2]=15.0;
+//**  evt.fadc_th[3]=15.0;
+//**  evt.fadc_th[4]=15.0;
+//**  evt.fadc_th[5]=15.0;
+//**  evt.fadc_th[6]=15.0;
+//**  evt.fadc_th[7]=15.0;
+//**
+//**  parm.ppac_geo[0][0]=-1.7438+3.93-1.64;
+//**  parm.ppac_geo[0][1]=0.5954;
+//**  parm.ppac_geo[1][0]=-1.3177+4.635-3.68;
+//**  parm.ppac_geo[1][1]=-0.38158;
   
 
   for(i=0;i<4;i++) evt.tpcclk[i][1]=0;
@@ -197,40 +197,40 @@ int main(int argc, char *argv[]){
     evt.scv830[i]=0;
   }
 
-  /* BDC parameter setting */
-  for(i=0; i<N_BDC; i++){
-    for(j=0; j<BDC_PLANE; j++){
-      for(k=0; k<N_CALI_PARM; k++){
-	  evt.bdc_parm[i][j][0][k]=1000000;
-	  evt.bdc_parm[i][j][1][k]=10;
-      }
-    }
-  }
+//**  /* BDC parameter setting */
+//**  for(i=0; i<N_BDC; i++){
+//**    for(j=0; j<BDC_PLANE; j++){
+//**      for(k=0; k<N_CALI_PARM; k++){
+//**	  evt.bdc_parm[i][j][0][k]=1000000;
+//**	  evt.bdc_parm[i][j][1][k]=10;
+//**      }
+//**    }
+//**  }
 
-  char fname[256];
-  FILE *fp;
-  printf("BDC_PLANE=%d \n", BDC_PLANE);
-  for(i=0; i<N_BDC; i++){
-    for(j=0; j<BDC_PLANE; j++){
-      sprintf(fname, "./calib/bdccalib-%d.dat", 10*i+j);
-      fp=fopen(fname, "r");
-
-      printf("BDC calibration file: %s\n", fname);
-
-      if(fp==NULL){
-	printf("BDC calibration data does not exist!!!,  %s\n", fname);
-      }
-      
-      else{
-	for(k=0; k<N_CALI_PARM; k++){
-	  fscanf(fp, "%f %f", 
-		 &evt.bdc_parm[i][j][0][k], &evt.bdc_parm[i][j][1][k]);
-	  if(feof(fp)==1) break;
-	}
-	fclose(fp);
-      }
-    }
-  }
+//**  char fname[256];
+//**  FILE *fp;
+//**  printf("BDC_PLANE=%d \n", BDC_PLANE);
+//**  for(i=0; i<N_BDC; i++){
+//**    for(j=0; j<BDC_PLANE; j++){
+//**      sprintf(fname, "./calib/bdccalib-%d.dat", 10*i+j);
+//**      fp=fopen(fname, "r");
+//**
+//**      printf("BDC calibration file: %s\n", fname);
+//**
+//**      if(fp==NULL){
+//**	printf("BDC calibration data does not exist!!!,  %s\n", fname);
+//**      }
+//**      
+//**      else{
+//**	for(k=0; k<N_CALI_PARM; k++){
+//**	  fscanf(fp, "%f %f", 
+//**		 &evt.bdc_parm[i][j][0][k], &evt.bdc_parm[i][j][1][k]);
+//**	  if(feof(fp)==1) break;
+//**	}
+//**	fclose(fp);
+//**      }
+//**    }
+//**  }
 
   /** Define Histgram **************/
 //**   if(flag&0x8){ /* if online option is given */
@@ -443,7 +443,7 @@ int main(int argc, char *argv[]){
 	    rp=sz[2];
 	    break;
 	  default:
-	    printf("%s:Unknown class ID (%d) in Layer 2.\n",
+	    printf("%s:Unknown class ID (%d) in Layer 2.",
 		   comname,rhdl[2].blksize);
 	    rp=sz[2];
 	    break;

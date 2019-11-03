@@ -56,6 +56,7 @@ protected:
   double peak[N_AC][N_FADC];
   double base_line[N_AC][N_FADC];
   int sca[N_SCA];
+  int sca_clk;
 
 private:
   MyAna();

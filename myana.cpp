@@ -22,15 +22,17 @@ MyAna::~MyAna()
 void MyAna::Analysis(struct evtdata *evt)
 {
   InitLocal();
-// Find edges of tracks
+
+/////////////////// Find edges of tracks ///////////////////
 //**  double m_edge[N_AC][N_STRP];
   std::vector<std::vector<double> > m_edge; //**
-  std::vector<double> x;                    //**
+  std::vector<std::vector<double> > x;      //**
   int track_state = 0;
   for(int i=0;i!=N_AC;++i){
     std::vector<std::vector<int> > l_edge_ac;
     std::vector<std::vector<int> > t_edge_ac;
     std::vector<double> m_edge_ac; //**
+    std::vector<double> x_ac;
     for(int j=0;j!=N_STRP;++j){
       std::vector<int> l_edge_strp;
       std::vector<int> t_edge_strp;
@@ -86,40 +88,50 @@ void MyAna::Analysis(struct evtdata *evt)
 ////      }                                                                                   //** 
       if(m_edge_strp>0){
 	m_edge_ac.push_back(m_edge_strp/m_edge_strp_cnt);
-	x.push_back(j);
+	x_ac.push_back(j);
       }
 //**      m_edge[i][j] = m_edge_strp/m_edge_strp;
     }
     l_edge.push_back(l_edge_ac);
     t_edge.push_back(t_edge_ac);
     m_edge.push_back(m_edge_ac); //**
+    x.push_back(x_ac);
 //    edge_pos[0][ac] = l_edge_ac.data();
 //    edge_pos[1][ac] = t_edge_ac.data();
 //    edge_num
   }
+////////////////////////////////////
 
-// Calc drift speed
+///////// Calc drift speed /////////
 //**  double x[N_STRP];
 //**  for(int strp=0;strp!=N_STRP;++strp){
 //**    x[strp] = strp;
 //**  }
 
 //**  TGraph gr(N_STRP, x, m_edge[0]);
-  TGraph gr(x.size(), x.data(), m_edge[0].data()); //**
-  TF1 f = TF1("f", "[0]*x+[1]", 0, 256);
-  f.SetParameter(0, 0);  // Set initial values of fitting function
-  f.SetParameter(1, 300);
-  gr.Fit("f", "RNQ");
-  p[0] = f.GetParameter(0); // Get fitting values
-  p[1] = f.GetParameter(1);
-  p[2] = f.GetChisquare()/f.GetNDF();
-  if(p[0]>-0.1 && p[0]<0.1){
-    drift_v = -1;
+  if(x[0].size()>0){
+    TGraph gr(x[0].size(), x[0].data(), m_edge[0].data()); //**
+    TF1 f = TF1("f", "[0]*x+[1]", 0, 256);
+    f.SetParameter(0, 0);  // Set initial values of fitting function
+    f.SetParameter(1, 300);
+    gr.Fit("f", "RNQ");
+    p[0] = f.GetParameter(0); // Get fitting values
+    p[1] = f.GetParameter(1);
+    p[2] = f.GetChisquare()/f.GetNDF();
+    if(p[0]>-0.1 && p[0]<0.1){
+      drift_v = -1;
+    }else{
+      drift_v = TMath::Tan(30.*TMath::DegToRad())*0.4/(10*TMath::Abs(p[0]));
+    }
   }else{
-    drift_v = TMath::Tan(30.*TMath::DegToRad())*0.4/(10*TMath::Abs(p[0]));
+    drift_v = -10;
+    p[0] = -100;
+    p[1] = -100;
+    p[2] = -100;
   }
+  ////////////////////////////////
   
-// Integrate FADC
+///////// Integrate FADC /////////
   int th = 0;
   for(int ac=0;ac!=N_AC;++ac){
     integ_fadc_full[ac] = 0;
@@ -137,8 +149,9 @@ void MyAna::Analysis(struct evtdata *evt)
       integ_fadc_full[ac] += integ_fadc[ac][str];
     }
   }
+/////////////////////////////
 
-// Find peak
+///////// Find peak /////////
   for(int ac=0;ac!=N_AC;++ac){
     for(int str=0;str!=N_FADC;++str){
       peak[ac][str] = 0;
@@ -149,11 +162,13 @@ void MyAna::Analysis(struct evtdata *evt)
       }
     }
   }
+  ///////////////////////
 
-  
+///////// scaler /////////
   for(int ch=0;ch!=N_SCA;++ch){
     sca[ch] = evt->isca[ch];
   }
+  sca_clk = int((sca[0]/10.)+evt->start_time);
 
   // tpc clk
   if(tpc_clk==0){
@@ -191,6 +206,7 @@ void MyAna::TreeDef()
   tree->Branch("peak", peak, branch);
   sprintf(branch, "sca[%d]/I", N_SCA);
   tree->Branch("sca", sca, branch);
+  tree->Branch("sca_clk", &sca_clk, "sca_clk/I");
   tree->Branch("Map", Map, "Map[2][256][16]/l");
 //  tree->Branch("l_edge", &l_edge);
 //  tree->Branch("t_edge", &t_edge);
